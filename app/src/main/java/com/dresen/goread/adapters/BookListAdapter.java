@@ -17,13 +17,13 @@ import java.util.ArrayList;
 // BookListAdapter will bind each book to the view in the Recycler View
 public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookViewHolder> {
     // class variables.  List of books and the MainActivity context.
-    private ArrayList<Book> mBooks = new ArrayList<>();
+    private ArrayList<Book> mBooks;
     private Context mContext;
 
     // constructor
-    public BookListAdapter(Context context, ArrayList<Book> restaurants) {
+    public BookListAdapter(Context context, ArrayList<Book> books) {
         mContext = context;
-        mBooks = restaurants;
+        mBooks = books;
     }
 
     // inflates the layout and creates the ViewHolder object required for the adapter.
@@ -31,8 +31,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
     @Override
     public BookListAdapter.BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.book_list_item, parent, false);
-        BookViewHolder viewHolder = new BookViewHolder(view);
-        return viewHolder;
+        return new BookViewHolder(view);
     }
 
     // updates the contents of the ItemView to reflect the book in given position.
@@ -68,8 +67,8 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
 
         public void bindBook(Book book) {
             mTitleTextView.setText(book.getTitle());
-            mFnameTextView.setText(book.getFirstName());
-            mLnameTextView.setText(book.getLastName());
+            mFnameTextView.setText(book.getAuthor().getFirstName());
+            mLnameTextView.setText(book.getAuthor().getLastName());
             mDescTextView.setText(book.getDescription());
         }
     }
