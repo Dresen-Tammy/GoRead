@@ -20,6 +20,7 @@ import com.dresen.goread.model.Book;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity
     private BookListAdapter mAdapter;
     public ArrayList<Book> booksList = null;
 
+    // onCreate is called when app starts or when it is awakened from sleep.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,21 +86,6 @@ public class MainActivity extends AppCompatActivity
                 });
             }
         });
-
-        //Book book1 = new Book("Holes", "Lots of digging.", "Louis", "Sacher");
-        //Book book2 = new Book("The Chemist", "Innocent torturer runs from evil government.", "Stephanie", "Meyer");
-        //Book book3 = new Book("Ender's Game", "Babies killing buggers.", "Orson Scott", "Card");
-        //booksList = new ArrayList<>();
-        //booksList.add(book1);
-        //booksList.add(book2);
-        //booksList.add(book3);
-        //
-        //mAdapter = new BookListAdapter(getApplicationContext(), booksList);
-        //mRecyclerView = findViewById(R.id.recyclerView);
-        //mRecyclerView.setAdapter(mAdapter);
-        //RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
-        //mRecyclerView.setLayoutManager(layoutManager);
-        //mRecyclerView.setHasFixedSize(true);
     }
 
     @Override
@@ -129,6 +116,17 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_title_sort) {
+            Collections.sort(booksList, Book.bookTitleComparator);
+            mRecyclerView.setAdapter(mAdapter);
+            return true;
+        }
+        if (id == R.id.action_author_sort) {
+            Collections.sort(booksList, Book.bookAuthorComparator);
+            mRecyclerView.setAdapter(mAdapter);
+            return true;
+        }
+
 
         return super.onOptionsItemSelected(item);
     }

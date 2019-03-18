@@ -12,21 +12,22 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
-        android:textSize="24sp"
+        android:text="@string/textviewTitle"
+        android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/textViewBy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:text="@string/TextViewBy"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_title"
-        tools:text="by" />
+        tools:text="By" />
 
     <TextView
         android:id="@+id/textView_fname"
@@ -34,8 +35,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
+        android:text="@string/textviewFirstName"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/textViewBy"
         app:layout_constraintTop_toBottomOf="@+id/textView_title" />
 
     <TextView
@@ -44,7 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:text="@string/textviewLastName"
+        android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView_fname"
         app:layout_constraintTop_toBottomOf="@+id/textView_title" />
 
@@ -54,9 +57,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:text="@string/string_textview"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_fname" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_fname"
+        tools:text="Description about book" />
 
     <View
         android:id="@+id/divider"

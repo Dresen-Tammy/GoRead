@@ -1,27 +1,28 @@
 package com.dresen.goread.model;
 
+import android.icu.text.UnicodeSet;
+
+import java.util.Comparator;
+
 public class Book {
     private Integer id;
     private String title;
     private String description;
-    private String firstName;
-    private String lastName;
+    private Author author;
 
     public Book() {
     }
 
-    public Book(Integer id, String title, String description, String firstName, String lastName) {
+    public Book(Integer id, String title, String description, Author author) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.author = author;
     }
-    public Book(String title, String description, String firstName, String lastName) {
+    public Book(String title, String description, Author author) {
         this.title = title;
         this.description = description;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.author = author;
     }
 
     public Integer getId() {
@@ -48,19 +49,40 @@ public class Book {
         this.description = description;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public Author getAuthor() {
+        return author;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setAuthor(Author author) {
+        this.author = author;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public static Comparator<Book> bookTitleComparator = new Comparator<Book>() {
+        @Override
+        public int compare(Book o1, Book o2) {
+            String title1 = o1.getTitle().toUpperCase();
+            String title2 = o2.getTitle().toUpperCase();
+
+            return title1.compareTo(title2);
+        }};
+
+    public static Comparator<Book> bookAuthorComparator = new Comparator<Book>() {
+        @Override
+        public int compare(Book o1, Book o2) {
+            String author1 = o1.getAuthor().getLastName().toUpperCase()+o1.getAuthor().getFirstName().toUpperCase();
+            String author2 = o2.getAuthor().getLastName().toUpperCase()+o2.getAuthor().getFirstName().toUpperCase();
+
+            return author1.compareTo(author2);
+        }};
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", author=" + author +
+                '}';
     }
 }

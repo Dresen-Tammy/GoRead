@@ -6,4 +6,14 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_title_sort"
+        android:orderInCategory="200"
+        android:title="@string/action_title_sort"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_author_sort"
+        android:orderInCategory="300"
+        android:title="@string/action_author_sort"
+        app:showAsAction="never" />
 </menu>
