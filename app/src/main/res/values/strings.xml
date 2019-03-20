@@ -14,4 +14,11 @@
     <string name="textviewFirstName">First</string>
     <string name="action_title_sort">Sort by Title</string>
     <string name="action_author_sort">Sort by Author</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="login_title">Login</string>
+    <string name="textviewUserName">Username</string>
+    <string name="textviewPass">Password</string>
+    <string name="textviewLogout">Do you want to log out?</string>
 </resources>
