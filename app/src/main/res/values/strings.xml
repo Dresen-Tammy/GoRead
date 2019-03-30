@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Go Read</string>
+    <string name="app_name">Go Read Library</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_title">Go Read Library</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
@@ -21,4 +21,5 @@
     <string name="textviewUserName">Username</string>
     <string name="textviewPass">Password</string>
     <string name="textviewLogout">Do you want to log out?</string>
+    <string name="action_addBook">add</string>
 </resources>

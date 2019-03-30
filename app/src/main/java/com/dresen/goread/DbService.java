@@ -3,6 +3,7 @@ package com.dresen.goread;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.dresen.goread.model.Author;
 import com.dresen.goread.model.Book;
 import com.dresen.goread.model.User;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,6 +15,7 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,7 +41,7 @@ import okhttp3.Response;
 *  DbService has post and get requests to database.
  */
 public class DbService {
-
+    // register and login
     public static void postDatabase(ClearableCookieJar cookieJar, String command, String user, String pass, Callback callback) throws IOException {
 
         // build client to use to send request
@@ -65,6 +67,58 @@ public class DbService {
 
     }
 
+    // logout
+    public static void postDatabase(ClearableCookieJar cookieJar, String command, String user, Callback callback) throws IOException {
+
+        // build client to use to send request
+        OkHttpClient client = new OkHttpClient.Builder()
+                .cookieJar(cookieJar)
+                .build();
+        // add the url and the body
+        RequestBody body = new FormBody.Builder()
+                .add("command", command)
+                .add("username", user)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(Constants.LIBRARY_BASE_URL)
+                .post(body)
+                .build();
+        // create call to database
+        Call call = client.newCall(request);
+        // execute call (Enqueue is an okhttp method that runs asynchronously.
+        // When the response comes, it calls callback method
+        call.enqueue(callback);
+
+    }
+    // add book
+    public static void postDatabase(ClearableCookieJar cookieJar, String title, String description, String authorFirst, String authorLast, Callback callback) throws IOException {
+
+        // build client to use to send request
+        OkHttpClient client = new OkHttpClient.Builder()
+                .cookieJar(cookieJar)
+                .build();
+        // add the url and the body
+        RequestBody body = new FormBody.Builder()
+                .add("command", "book")
+                .add("title", title)
+                .add("description", description)
+                .add("authorFirst", authorFirst)
+                .add("authorLast", authorLast)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(Constants.LIBRARY_BASE_URL)
+                .post(body)
+                .build();
+        // create call to database
+        Call call = client.newCall(request);
+        // execute call (Enqueue is an okhttp method that runs asynchronously.
+        // When the response comes, it calls callback method
+        call.enqueue(callback);
+
+    }
+    // getBooks
     public static void getDatabase(String cvalue, String ivalue, Callback callback) throws IOException {
         // build client to use the send request
         OkHttpClient client = new OkHttpClient.Builder()
@@ -129,4 +183,13 @@ public class DbService {
         System.out.println("process Login reached");
         return null;
     }
-}
+
+    public ArrayList<Author> processAuthors(Response response) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonData = response.body().string();
+        ArrayList<Author> authors = (ArrayList<Author>) mapper.readValue(jsonData, ArrayList.class);
+        ArrayList<Author> newAuthors = mapper.convertValue(authors, new TypeReference<ArrayList<Author>>() {
+        });
+        return newAuthors;
+    }
+    }

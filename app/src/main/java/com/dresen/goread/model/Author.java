@@ -1,6 +1,7 @@
 package com.dresen.goread.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Set;
 
 public class Author {
@@ -49,4 +50,17 @@ public class Author {
     public void setBooks(Set<Book> books) {
         this.books = books;
     }
+
+
+    public static Comparator<Book> bookTitleComparator = new Comparator<Book>() {
+        @Override
+        public int compare(Book o1, Book o2) {
+            String title1 = o1.getTitle().toUpperCase();
+            String title2 = o2.getTitle().toUpperCase();
+
+            return title1.compareTo(title2);
+        }
+    };
+
+
 }

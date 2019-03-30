@@ -22,8 +22,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dresen.goread.adapters.BookListAdapter;
+import com.dresen.goread.model.Author;
 import com.dresen.goread.model.Book;
 import com.dresen.goread.model.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.franmontiel.persistentcookiejar.ClearableCookieJar;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     public ArrayList<Book> booksList = null;
     public static User currentUser;
     ClearableCookieJar cookieJar = null;
+    public ArrayList<Author> authorList = null;
 
     /* *******************************************************************
      * onCreate is called when app starts or when it is awakened from sleep.
@@ -82,9 +85,26 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Menu menu = navigationView.getMenu();
-        MenuItem logout = menu.findItem(R.id.nav_logout);
+        List<Cookie> cookies = cookieJar.loadForRequest(HttpUrl.parse(Constants.LIBRARY_BASE_URL));
         MenuItem register = menu.findItem(R.id.nav_register);
         MenuItem login = menu.findItem(R.id.nav_login);
+        MenuItem logout = menu.findItem(R.id.nav_logout);
+        Boolean loggedin = false;
+        for (Cookie cookie : cookies) {
+            if (cookie != null) {
+                loggedin = true;
+            }
+        }
+        if (loggedin == false) {
+            logout.setVisible(false);
+            login.setVisible(true);
+            register.setVisible(true);
+
+        } else {
+            logout.setVisible(true);
+            login.setVisible(false);
+            register.setVisible(false);
+        }
         //TODO, if logged in hide login/register button. else hide logout
         // TODO logout.setVisible(false);
     }
@@ -119,6 +139,11 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            try {
+                getBooks();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return true;
         }
         if (id == R.id.action_title_sort) {
@@ -130,6 +155,22 @@ public class MainActivity extends AppCompatActivity
             Collections.sort(booksList, Book.bookAuthorComparator);
             mRecyclerView.setAdapter(mAdapter);
             return true;
+        }
+        if (id == R.id.action_addBook) {
+            // TODO if logged in, add book. else, display login.
+            List<Cookie> cookies = cookieJar.loadForRequest(HttpUrl.parse(Constants.LIBRARY_BASE_URL));
+            Boolean loggedIn = false;
+            for (Cookie cookie : cookies) {
+                if (cookie != null) {
+                    loggedIn = true;
+                    break;
+                }
+            }
+            if (loggedIn == false) {
+                loginPopup();
+            } else {
+                addBookPopup();
+            }
         }
 
 
@@ -157,7 +198,6 @@ public class MainActivity extends AppCompatActivity
             registerPopup();
 
 
-
             // logout
         } else if (id == R.id.nav_logout) {
             logoutPopup();
@@ -169,13 +209,10 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
     /* *******************************************************************
      * getBooks gets arrayList of books for main view library recyclerView.
      * ******************************************************************* */
     public void getBooks() throws IOException {
-        //TODO get books from database
         final DbService db = new DbService();
         db.getDatabase("books", "", new Callback() {
 
@@ -202,8 +239,8 @@ public class MainActivity extends AppCompatActivity
                 });
             }
         });
-    }
 
+    }
 
 
     /* *******************************************************************
@@ -269,7 +306,7 @@ public class MainActivity extends AppCompatActivity
         final DbService db = new DbService();
         RequestBody body = db.registerBody("register", username, password);
 
-        db.postDatabase(cookieJar,"register", username, password, new
+        db.postDatabase(cookieJar, "register", username, password, new
 
                 Callback() {
                     @Override
@@ -359,13 +396,29 @@ public class MainActivity extends AppCompatActivity
                         Context context = getApplicationContext();
                         List<Cookie> cookies = cookieJar.loadForRequest(HttpUrl.parse(Constants.LIBRARY_BASE_URL));
                         Boolean loggedin = false;
-                        for (Cookie cookie :cookies) {
+                        for (Cookie cookie : cookies) {
                             if (cookie != null) {
                                 loggedin = true;
-                                makeToast("Login Successful");
+                                break;
                             }
                         }
-                        if (loggedin = false) {
+                        if (loggedin == true) {
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                                    Menu menu = navigationView.getMenu();
+                                    MenuItem register = menu.findItem(R.id.nav_register);
+                                    MenuItem login = menu.findItem(R.id.nav_login);
+                                    MenuItem logout = menu.findItem(R.id.nav_logout);
+                                    register.setVisible(false);
+                                    login.setVisible(false);
+                                    logout.setVisible(true);
+
+                                    makeToast("Login Successful");
+                                }
+                            });
+                        } else {
                             makeToast("Error logging in");
                         }
                     }
@@ -391,9 +444,9 @@ public class MainActivity extends AppCompatActivity
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final DbService db = new DbService();
                         try {
-                            db.postDatabase(cookieJar, "logout", currentUser.getUname(), "", new Callback() {
+                            final DbService db = new DbService();
+                            db.postDatabase(cookieJar, "logout", "", new Callback() {
                                 @Override
                                 public void onFailure(Call call, IOException e) {
                                     makeToast("Error Logging Out");
@@ -404,6 +457,20 @@ public class MainActivity extends AppCompatActivity
                                 public void onResponse(Call call, Response response) throws IOException {
                                     cookieJar.clear();
                                     makeToast("Logged out");
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                                            Menu menu = navigationView.getMenu();
+                                            MenuItem register = menu.findItem(R.id.nav_register);
+                                            MenuItem login = menu.findItem(R.id.nav_login);
+                                            MenuItem logout = menu.findItem(R.id.nav_logout);
+                                            logout.setVisible(false);
+                                            login.setVisible(true);
+                                            register.setVisible(true);
+                                        }
+                                    });
+
 
                                 }
                             });
@@ -419,6 +486,90 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
         alert.show();
+    }
+
+
+
+    /* *******************************************************************
+     * login button pressed, login popup
+     * ******************************************************************* */
+
+    private void addBookPopup() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        // get the layout to inflate
+        final View bookEntryView = factory.inflate(R.layout.book_entry, null);
+        final EditText title = (EditText) bookEntryView.findViewById(R.id.editText_BookTitle);
+        final EditText desc = (EditText) bookEntryView.findViewById(R.id.editText_BookDescription);
+        final EditText first = (EditText) bookEntryView.findViewById(R.id.editText_AuthorFirst);
+        final EditText last = (EditText) bookEntryView.findViewById(R.id.editText_AuthorLast);
+
+        title.setText("", TextView.BufferType.EDITABLE);
+        desc.setText("", TextView.BufferType.EDITABLE);
+        first.setText("", TextView.BufferType.EDITABLE);
+        last.setText("", TextView.BufferType.EDITABLE);
+
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Add New Book").setView(bookEntryView)
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Add book
+                        try {
+                            String bookTitle = title.getText().toString();
+                            String bookDesc = desc.getText().toString();
+                            String bookAuthorFirst = first.getText().toString();
+                            String bookAuthorLast = last.getText().toString();
+
+                            if (bookTitle != "" && bookDesc != "" && bookAuthorFirst != "" && bookAuthorLast != "") {
+                                addBook(bookTitle, bookDesc, bookAuthorFirst, bookAuthorLast);
+                            } else {
+                                addBookPopup();
+                                makeToast("Fill in all fields.");
+                            }
+
+                        } catch (IOException e) {
+                            makeToast("Error adding book");
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        alert.show();
+    }
+
+    private void addBook(String bookTitle, String bookDesc, String bookAuthorFirst, String bookAuthorLast) throws IOException {
+        DbService db = new DbService();
+        db.postDatabase(cookieJar, bookTitle, bookDesc, bookAuthorFirst, bookAuthorLast, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("Failure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                System.out.println("Success");
+                String jsonData = response.body().string();
+                ObjectMapper mapper = new ObjectMapper();
+                Book book = mapper.readValue(jsonData, Book.class);
+                booksList.add(book);
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter = new BookListAdapter(getApplicationContext(), booksList);
+                        mRecyclerView = findViewById(R.id.recyclerView);
+                        mRecyclerView.setAdapter(mAdapter);
+                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
+                        mRecyclerView.setLayoutManager(layoutManager);
+                        mRecyclerView.setHasFixedSize(true);
+                    }
+                });
+            }
+        });
     }
 
     /* *******************************************************************
