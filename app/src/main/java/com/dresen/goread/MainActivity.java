@@ -272,11 +272,12 @@ public class MainActivity extends AppCompatActivity
                         try {
                             String user = username.getText().toString();
                             String pass = password.getText().toString();
-                            if (user != "" && pass != null) {
-                                registerUser(user, pass);
-                            } else {
+                            if (user.trim().equals("") || pass.trim().equals("")) {
                                 registerPopup();
                                 makeToast("Fill in Username and Password");
+                            } else {
+
+                                registerUser(user, pass);
                             }
 
                         } catch (IOException e) {
@@ -353,11 +354,12 @@ public class MainActivity extends AppCompatActivity
                         try {
                             String user = username.getText().toString();
                             String pass = password.getText().toString();
-                            if (user != "" && pass != null) {
-                                loginUser(user, pass);
-                            } else {
+                            if (user.trim().equals("") || pass.trim().equals("")) {
                                 loginPopup();
                                 makeToast("Fill in Username and Password");
+                            } else {
+
+                                loginUser(user, pass);
                             }
 
                         } catch (IOException e) {
@@ -520,11 +522,12 @@ public class MainActivity extends AppCompatActivity
                             String bookAuthorFirst = first.getText().toString();
                             String bookAuthorLast = last.getText().toString();
 
-                            if (bookTitle != "" && bookDesc != "" && bookAuthorFirst != "" && bookAuthorLast != "") {
-                                addBook(bookTitle, bookDesc, bookAuthorFirst, bookAuthorLast);
-                            } else {
+                            if (bookTitle.trim().equals("") || bookDesc.trim().equals("") || bookAuthorFirst.trim().equals("") || bookAuthorLast.trim().equals("")) {
                                 addBookPopup();
                                 makeToast("Fill in all fields.");
+
+                            } else {
+                                addBook(bookTitle, bookDesc, bookAuthorFirst, bookAuthorLast);
                             }
 
                         } catch (IOException e) {

@@ -5,7 +5,7 @@
     <string name="nav_header_title">Go Read Library</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Refresh</string>
     <string name="textview" />
     <string name="string_textview" />
     <string name="textviewLastName">Last</string>
